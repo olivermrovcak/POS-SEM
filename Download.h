@@ -7,18 +7,21 @@
 
 #include <string>
 #include <iostream>
+#include <boost/asio.hpp>
+#include <regex>
+#include <fstream>
 
 
 class Download {
 
+private:
     std::string protocol;
-    std::string filename;
-    std::string localFilename;
     std::string hostname;
-    std::string path;
-    std::string filepath;
+    std::string savePath;
+    std::string downloadPath;
     std::string username;
     std::string password;
+
     int priority;
     double size;
     double currentSize = 0;
@@ -28,6 +31,20 @@ public:
     Download(std::string protocol, std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority);
     ~Download();
 
+    void pause();
+    void resume();
+    void cancel();
+    void restart();
+
+    void setPriority(int priority);
+    void setFilename(std::string filename);
+
+    void ftpDownload();
+    void ftpsDownload();
+    void httpDownload();
+    void httpsDownload();
+
+    bool parse_pasv_response(const std::string &response, std::string &ip_address, unsigned short &port);
 };
 
 

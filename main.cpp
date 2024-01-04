@@ -1,8 +1,10 @@
 #include <ncurses.h>
+#undef timeout
+#include <boost/asio.hpp>
 #include <string>
 #include <vector>
-#include <map>
 #include "Menu.h"
+#include "Download.h"
 
 void initialize_ncurses() {
     initscr();
@@ -21,6 +23,13 @@ void initialize_ncurses() {
 
 int main() {
     initialize_ncurses();
+
+    std::string server = "klokanek.endora.cz";
+    std::string username = "olivergg";
+    std::string password = "Zenfone5.";
+    std::string filename = "example.txt"; // Replace with the filename you want to download
+
+    Download download("FTP", "klokanek.endora.cz", "/Users/olivermrovcak/test.txt", "/web/style.css", "olivergg", "Heslo5.", 1);
 
     // Create main menu and submenus
     Menu mainMenu("Choose protocol\n", {"FTP", "FTPS", "HTTP", "HTTPS", "Exit"});
