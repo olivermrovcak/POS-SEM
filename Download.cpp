@@ -54,6 +54,12 @@ void Download::setPriority(int priority) {
 }
 
 void Download::ftpDownload() {
+    initscr();            // Initialize ncurses
+    cbreak();             // Disable line buffering
+    keypad(stdscr, TRUE); // Enable function keys
+    noecho();             // Disable echo
+
+
     boost::asio::io_service io_service;
 
     // Resolve the server address and port
@@ -70,7 +76,7 @@ void Download::ftpDownload() {
         boost::asio::streambuf response;
         boost::asio::read_until(sock, response, "\n");
         std::string s((std::istreambuf_iterator<char>(&response)), std::istreambuf_iterator<char>());
-        std::cout << s << std::endl;
+        printw("%s\n", s.c_str()); // Change std::cout to printw
         return s;
     };
 
@@ -124,11 +130,15 @@ void Download::ftpDownload() {
         }
 
         if (ec && ec != boost::asio::error::eof) {
-            std::cerr << "Error during read: " << ec.message() << std::endl;
+            printw("Error during read: %s\n", ec.message().c_str()); // Change std::cerr to printw for errors
         }
 
         outfile.close();
         data_socket.close();
+
+        printw("Press any key to continue...");
+        getch();   // Wait for user input
+        endwin();  // End ncurses mode
     } else {
         std::cerr << "Failed to parse the PASV response." << std::endl;
     }

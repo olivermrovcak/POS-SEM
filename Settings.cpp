@@ -25,3 +25,7 @@ std::string Settings::loadSavePath(const std::string &filename) {
     }
     return line;
 }
+
+std::string Settings::getSavePath() {
+    return savePath;
+}

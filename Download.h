@@ -10,6 +10,7 @@
 #include <boost/asio.hpp>
 #include <regex>
 #include <fstream>
+#include <ncurses.h>
 
 
 class Download {
