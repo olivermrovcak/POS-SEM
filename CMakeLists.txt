@@ -15,7 +15,9 @@ add_executable(POS_SEM main.cpp
         Download.h
         Enums.h
         Menu.cpp
-        Menu.h)
+        Menu.h
+        Settings.cpp
+        Settings.h)
 
 target_link_libraries(POS_SEM Boost::system)
 target_link_libraries(POS_SEM ${CURSES_LIBRARIES})

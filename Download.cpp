@@ -109,8 +109,12 @@ void Download::ftpDownload() {
         boost::asio::write(socket, boost::asio::buffer(retr_cmd));
         read_response(socket);
 
+        size_t lastSlashPos = this->downloadPath.find_last_of("/\\");
+        std::string filename = lastSlashPos != std::string::npos ? this->downloadPath.substr(lastSlashPos + 1) : this->downloadPath;
+        std::string fullSavePath = this->savePath + (this->savePath.back() == '/' ? "" : "/") + filename;
+
         // Open a file to write the downloaded data
-        std::ofstream outfile(this->savePath, std::ios::binary);
+        std::ofstream outfile(fullSavePath, std::ios::binary);
 
         // Read and write the file data from the data socket
         boost::asio::streambuf response;

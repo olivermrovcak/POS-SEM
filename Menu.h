@@ -19,6 +19,8 @@ private:
     std::vector<std::string> options;
     int highlight;
     std::map<int, std::function<void()>> actions;
+    std::map<int, std::string> inputs;
+    int downloadProgress;
 public:
     Menu(const std::string &title, const std::vector<std::string> &options);
     ~Menu();
@@ -26,7 +28,11 @@ public:
     void display();
     void setAction(int optionIndex, std::function<void()> action);
     void executeAction();
-
+    void setInput(int optionIndex, const std::string &inputPrompt);
+    std::string getInput(int optionIndex);
+    void setDownloadProgress(int progress);
+    std::string getOption(int optionIndex);
+    std::string getInputAsString(int optionIndex);
 
 };
 
