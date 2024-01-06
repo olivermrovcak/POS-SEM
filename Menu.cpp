@@ -16,11 +16,7 @@ void Menu::display () {
     while (true) {
         clear();
 
-        if (!downloadStatuses.empty()) {
-            mvprintw(0, 10, "status");
-        }
-
-        mvprintw(2, 10, title.c_str());
+        mvprintw(1, 10, title.c_str());
 
         for (size_t i = 0; i < options.size(); ++i) {
             if (i == highlight) {
@@ -108,6 +104,18 @@ std::string Menu::getOption(int optionIndex) {
 
 std::string Menu::getInputAsString(int optionIndex) {
     return inputs[optionIndex];
+}
+
+std::string Menu::getTitle() {
+    return title;
+}
+
+int Menu::getHighlight() {
+    return highlight;
+}
+
+void Menu::setOptions(const std::vector<std::string> &options) {
+    this->options = options;
 }
 
 

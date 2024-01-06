@@ -17,7 +17,9 @@ public:
     Settings();
     ~Settings();
 
-    std::string loadSavePath(const std::string& filename);
+    void saveDownload(std::string url, std::string path, unsigned long size);
+    std::vector<std::string> loadHistory();
+    std::string loadSavePath();
     void setSavePath(std::string savePath);
     std::string getSavePath();
 };

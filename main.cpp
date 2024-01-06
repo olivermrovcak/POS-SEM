@@ -5,6 +5,7 @@
 #include "Download.h"
 #include "Settings.h"
 #include "DownloadManager.h"
+#include "DownloadDisplayMenu.h"
 
 void initialize_ncurses() {
     initscr();
@@ -21,6 +22,11 @@ void initialize_ncurses() {
     init_pair(1, COLOR_GREEN, COLOR_BLACK);
 }
 
+bool checkSettingsFileExists() {
+    std::ifstream file("../settings.txt");  // Change this to your actual settings file path
+    return file.good();  // Returns true if the file exists and is accessible
+}
+
 int main() {
     initialize_ncurses();
 
@@ -28,13 +34,14 @@ int main() {
     DownloadManager downloadManager;
 
     // Create main menu and submenus
-    Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n", {"Download", "Manage Directories", "Settings", "Exit"});
+    Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n", {"Download", "Currently downloading","History", "Settings", "Exit"});
     Menu ftpMenu("FTP Options\n", {"Option 1", "Option 2", "Back"});
-
     Menu ftpCredentialsMenu("FTP Credentials\nEnter the following details:\n",
                             {"Hostname","Path to file" ,"Port", "Username", "Password", "Download file from ftp", "Back"});
+    DownloadDisplayMenu downloadDisplayMenu("Downloads\nPress esc to exit.\n", downloadManager);
 
-    // Set up inputs for FTP credentials
+    Menu downloadHistoryMenu("Download history\n", {});
+
     ftpCredentialsMenu.setInput(0, "Enter Hostname");
     ftpCredentialsMenu.setAction(0, [&]() { ftpCredentialsMenu.getInput(0); });
 
@@ -52,32 +59,27 @@ int main() {
 
     // Set up actions for FTP credentials
     ftpCredentialsMenu.setAction(5, [&]() {
-        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", "klokanek.endora.cz", "/Users/olivermrovcak/", "/web/index.html", "olivergg", "Heslo5.", 1);
+        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", "klokanek.endora.cz", settings.getSavePath().c_str(), "/web/images/file.zip", "olivergg", "Heslo5.", 1);
         downloadManager.addDownload(download);
+        settings.saveDownload(download->getHostname(), download->getDownloadPath(), download->getSize() );
     });
 
     ftpCredentialsMenu.setAction(6, [&]() { mainMenu.display(); });
 
     mainMenu.setAction(0, [&]() { ftpCredentialsMenu.display(); });
-    mainMenu.setAction(4, [&]() { endwin(); exit(0); });
+    mainMenu.setAction(1, [&]() { downloadDisplayMenu.display(); });
+    mainMenu.setAction(2, [&]() {
+        std::vector<std::string> history;
+        for (int i = 0; i < settings.loadHistory().size(); ++i) {
+            history.push_back(settings.loadHistory()[i]);
+        }
+        history.emplace_back("back");
+        downloadHistoryMenu.setOptions(history);
+        downloadHistoryMenu.setAction(history.size() - 1, [&]() { mainMenu.display(); });
+        downloadHistoryMenu.display(); });
+        mainMenu.setAction(4, [&]() { endwin(); exit(0); });
 
-    ftpMenu.setAction(2, [&]() { mainMenu.display(); });
-    ftpMenu.setAction(0, [&]() {
-        Download download("FTP", "klokanek.endora.cz", "/Users/olivermrovcak/", "/web/index.html", "olivergg", "Heslo5.", 1);
-    });
-
-    // Link the main menu with the FTP credentials submenu
-    mainMenu.setAction(0, [&]() { ftpCredentialsMenu.display(); });
-
-    while (true) {
-        // Get the current download statuses
-        auto statuses = downloadManager.getDownloadStatuses();
-        mainMenu.setDownloadStatuses(statuses);
-
-        // Display the menu, which now includes download statuses
-        mainMenu.display();
-    }
-
+    mainMenu.display();
 
     endwin();
     return 0;

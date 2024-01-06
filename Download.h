@@ -10,6 +10,7 @@
 #include <boost/asio.hpp>
 #include <regex>
 #include <fstream>
+#include <ncurses.h>
 
 
 class Download {
@@ -23,8 +24,8 @@ private:
     std::string password;
 
     int priority;
-    double size;
-    double currentSize = 0;
+    unsigned long size;
+    unsigned long currentSize = 0.0;
     bool paused = false;
 
 public:
@@ -39,6 +40,21 @@ public:
 
     void setPriority(int priority);
     void setFilename(std::string filename);
+
+    std::string getNewFileName(const std::string& originalPath);
+
+    const std::string &getUsername() const;
+    const std::string &getPassword() const;
+    const std::string &getHostname() const;
+    const std::string &getSavePath() const;
+    const std::string &getDownloadPath() const;
+    const std::string &getProtocol() const;
+    const std::string &getFilename() ;
+
+    unsigned long getCurrentSize();
+    unsigned long getSize();
+
+    void setSize(unsigned long size);
 
     void ftpDownload();
     void ftpsDownload();
