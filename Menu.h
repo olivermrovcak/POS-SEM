@@ -21,6 +21,7 @@ private:
     std::map<int, std::function<void()>> actions;
     std::map<int, std::string> inputs;
     int downloadProgress;
+    std::vector<std::string> downloadStatuses;
 public:
     Menu(const std::string &title, const std::vector<std::string> &options);
     ~Menu();
@@ -33,6 +34,16 @@ public:
     void setDownloadProgress(int progress);
     std::string getOption(int optionIndex);
     std::string getInputAsString(int optionIndex);
+
+    void setDownloadStatuses(const std::vector<std::string>& statuses) {
+        downloadStatuses = statuses;
+    }
+
+    void displayDownloadStatuses() {
+        for (const auto& status : downloadStatuses) {
+            mvprintw(0, 10, status.c_str());
+        }
+    }
 
 };
 

@@ -31,6 +31,7 @@ public:
     Download(std::string protocol, std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority);
     ~Download();
 
+    void start();
     void pause();
     void resume();
     void cancel();

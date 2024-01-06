@@ -52,7 +52,7 @@ build cmake_object_order_depends_target_POS_SEM: phony || CMakeFiles/POS_SEM.dir
 build CMakeFiles/POS_SEM.dir/main.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /Users/olivermrovcak/Desktop/skool/POS-SEM/main.cpp || cmake_object_order_depends_target_POS_SEM
   DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
   DEP_FILE = CMakeFiles/POS_SEM.dir/main.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   INCLUDES = -isystem /opt/homebrew/include
   OBJECT_DIR = CMakeFiles/POS_SEM.dir
   OBJECT_FILE_DIR = CMakeFiles/POS_SEM.dir
@@ -60,7 +60,7 @@ build CMakeFiles/POS_SEM.dir/main.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /
 build CMakeFiles/POS_SEM.dir/Download.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /Users/olivermrovcak/Desktop/skool/POS-SEM/Download.cpp || cmake_object_order_depends_target_POS_SEM
   DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
   DEP_FILE = CMakeFiles/POS_SEM.dir/Download.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   INCLUDES = -isystem /opt/homebrew/include
   OBJECT_DIR = CMakeFiles/POS_SEM.dir
   OBJECT_FILE_DIR = CMakeFiles/POS_SEM.dir
@@ -68,7 +68,7 @@ build CMakeFiles/POS_SEM.dir/Download.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Deb
 build CMakeFiles/POS_SEM.dir/Menu.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /Users/olivermrovcak/Desktop/skool/POS-SEM/Menu.cpp || cmake_object_order_depends_target_POS_SEM
   DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
   DEP_FILE = CMakeFiles/POS_SEM.dir/Menu.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   INCLUDES = -isystem /opt/homebrew/include
   OBJECT_DIR = CMakeFiles/POS_SEM.dir
   OBJECT_FILE_DIR = CMakeFiles/POS_SEM.dir
@@ -76,7 +76,15 @@ build CMakeFiles/POS_SEM.dir/Menu.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /
 build CMakeFiles/POS_SEM.dir/Settings.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /Users/olivermrovcak/Desktop/skool/POS-SEM/Settings.cpp || cmake_object_order_depends_target_POS_SEM
   DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
   DEP_FILE = CMakeFiles/POS_SEM.dir/Settings.cpp.o.d
-  FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  INCLUDES = -isystem /opt/homebrew/include
+  OBJECT_DIR = CMakeFiles/POS_SEM.dir
+  OBJECT_FILE_DIR = CMakeFiles/POS_SEM.dir
+
+build CMakeFiles/POS_SEM.dir/DownloadManager.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Debug /Users/olivermrovcak/Desktop/skool/POS-SEM/DownloadManager.cpp || cmake_object_order_depends_target_POS_SEM
+  DEFINES = -DBOOST_SYSTEM_DYN_LINK -DBOOST_SYSTEM_NO_LIB
+  DEP_FILE = CMakeFiles/POS_SEM.dir/DownloadManager.cpp.o.d
+  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   INCLUDES = -isystem /opt/homebrew/include
   OBJECT_DIR = CMakeFiles/POS_SEM.dir
   OBJECT_FILE_DIR = CMakeFiles/POS_SEM.dir
@@ -89,7 +97,7 @@ build CMakeFiles/POS_SEM.dir/Settings.cpp.o: CXX_COMPILER__POS_SEM_unscanned_Deb
 #############################################
 # Link the executable POS_SEM
 
-build POS_SEM: CXX_EXECUTABLE_LINKER__POS_SEM_Debug CMakeFiles/POS_SEM.dir/main.cpp.o CMakeFiles/POS_SEM.dir/Download.cpp.o CMakeFiles/POS_SEM.dir/Menu.cpp.o CMakeFiles/POS_SEM.dir/Settings.cpp.o | /opt/homebrew/lib/libboost_system-mt.dylib /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libcurses.tbd /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libform.tbd
+build POS_SEM: CXX_EXECUTABLE_LINKER__POS_SEM_Debug CMakeFiles/POS_SEM.dir/main.cpp.o CMakeFiles/POS_SEM.dir/Download.cpp.o CMakeFiles/POS_SEM.dir/Menu.cpp.o CMakeFiles/POS_SEM.dir/Settings.cpp.o CMakeFiles/POS_SEM.dir/DownloadManager.cpp.o | /opt/homebrew/lib/libboost_system-mt.dylib /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libcurses.tbd /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libform.tbd
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   LINK_LIBRARIES = /opt/homebrew/lib/libboost_system-mt.dylib  /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libcurses.tbd  /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libform.tbd
   OBJECT_DIR = CMakeFiles/POS_SEM.dir

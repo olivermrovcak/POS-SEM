@@ -4,6 +4,7 @@
 #include "Menu.h"
 #include "Download.h"
 #include "Settings.h"
+#include "DownloadManager.h"
 
 void initialize_ncurses() {
     initscr();
@@ -24,6 +25,7 @@ int main() {
     initialize_ncurses();
 
     Settings settings;
+    DownloadManager downloadManager;
 
     // Create main menu and submenus
     Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n", {"Download", "Manage Directories", "Settings", "Exit"});
@@ -50,9 +52,11 @@ int main() {
 
     // Set up actions for FTP credentials
     ftpCredentialsMenu.setAction(5, [&]() {
-        Download download("FTP", ftpCredentialsMenu.getInputAsString(0), "/Users/olivermrovcak/",
-                          ftpCredentialsMenu.getInputAsString(1), ftpCredentialsMenu.getInputAsString(3), ftpCredentialsMenu.getInputAsString(4), 1);
+        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", "klokanek.endora.cz", "/Users/olivermrovcak/", "/web/index.html", "olivergg", "Heslo5.", 1);
+        downloadManager.addDownload(download);
     });
+
+    ftpCredentialsMenu.setAction(6, [&]() { mainMenu.display(); });
 
     mainMenu.setAction(0, [&]() { ftpCredentialsMenu.display(); });
     mainMenu.setAction(4, [&]() { endwin(); exit(0); });
@@ -65,8 +69,15 @@ int main() {
     // Link the main menu with the FTP credentials submenu
     mainMenu.setAction(0, [&]() { ftpCredentialsMenu.display(); });
 
-    // Display the main menu
-    mainMenu.display();
+    while (true) {
+        // Get the current download statuses
+        auto statuses = downloadManager.getDownloadStatuses();
+        mainMenu.setDownloadStatuses(statuses);
+
+        // Display the menu, which now includes download statuses
+        mainMenu.display();
+    }
+
 
     endwin();
     return 0;

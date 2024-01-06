@@ -16,7 +16,11 @@ void Menu::display () {
     while (true) {
         clear();
 
-        mvprintw(0, 10, title.c_str());
+        if (!downloadStatuses.empty()) {
+            mvprintw(0, 10, "status");
+        }
+
+        mvprintw(2, 10, title.c_str());
 
         for (size_t i = 0; i < options.size(); ++i) {
             if (i == highlight) {

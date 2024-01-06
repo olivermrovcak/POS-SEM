@@ -14,8 +14,13 @@ Download::Download(std::string protocol, std::string hostname, std::string saveP
     this->password = password;
     this->priority = priority;
     this->savePath = savePath;
+}
 
+Download::~Download() {
 
+}
+
+void Download::start() {
     if (protocol == "FTP") {
         ftpDownload();
     } else if (protocol == "FTPS") {
@@ -27,10 +32,6 @@ Download::Download(std::string protocol, std::string hostname, std::string saveP
     } else {
         std::cout << "Invalid protocol" << std::endl;
     }
-}
-
-Download::~Download() {
-
 }
 
 void Download::pause() {

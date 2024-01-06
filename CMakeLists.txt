@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.12)
 project(POS_SEM)
 
 find_package(Boost 1.65.0 REQUIRED COMPONENTS system)
 find_package(Curses REQUIRED)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include_directories(${CURSES_INCLUDE_DIR})
 
@@ -17,7 +17,9 @@ add_executable(POS_SEM main.cpp
         Menu.cpp
         Menu.h
         Settings.cpp
-        Settings.h)
+        Settings.h
+        DownloadManager.cpp
+        DownloadManager.h)
 
 target_link_libraries(POS_SEM Boost::system)
 target_link_libraries(POS_SEM ${CURSES_LIBRARIES})
