@@ -37,21 +37,31 @@ int main() {
 
     const std::chrono::seconds cleanupInterval(5);
 
-    // Create and start the cleanup thread
     std::thread cleanupThread([&]() {
-        while (true) { // You might want a condition here to stop the thread when the program is exiting
-            downloadManager.cleanupCompletedDownloads(); // Call the cleanup method
-            std::this_thread::sleep_for(cleanupInterval); // Sleep for the cleanup interval
+        while (true) {
+            downloadManager.cleanupCompletedDownloads();
+            downloadManager.checkAndInitiateScheduledDownloads();
+            std::this_thread::sleep_for(cleanupInterval);
         }
     });
 
     // Create main menu and submenus
     Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n",
-                  {"Download", "Currently downloading", "History", "Download manager", "Settings", "Exit"});
+                  {"Download", "Currently downloading", "History", "Download manager", "Schedule download", "Settings",
+                   "Exit"});
+    Menu scheduleMenu("Schedule download\nFill the inputs\n",
+                      {"Enter hostname", "Enter save path", "Enter download path", "Enter username", "Enter password",
+                       "Enter priority", "Enter protocol", "Enter time", "Submit schedule", "Back"});
     Menu downloadMenu("Choose protocol\n", {"HTTP", "HTTPS", "FTP", "FTPS", "Back"});
     Menu ftpCredentialsMenu("FTP Credentials\nEnter the following details:\n",
                             {"Hostname", "Path to file", "Port", "Username", "Password", "Download file from ftp",
                              "Back"});
+    Menu ftpsCredentialsMenu("FTPS Credentials\nEnter the following details:\n",
+                            {"Hostname", "Path to file", "Port", "Username", "Password", "Download file from ftp",
+                             "Back"});
+    Menu httpsMenu("HTTPS\nEnter the following details:\n",
+                   {"Hostname", "Path to file", "Download file from https",
+                    "Back"});
     DownloadDisplayMenu downloadDisplayMenu("Downloads\nPress esc to exit.\n", downloadManager);
 
     Menu managerMenu("Download manager\n", {});
@@ -59,13 +69,68 @@ int main() {
     Menu downloadHistoryMenu("Download history\n", {});
 
     //download menu
+    downloadMenu.setAction(1, [&]() {
+        httpsMenu.display();
+    });
     downloadMenu.setAction(2, [&]() {
-      ftpCredentialsMenu.display();
+        ftpCredentialsMenu.display();
+    });
+    downloadMenu.setAction(3, [&]() {
+        ftpsCredentialsMenu.display();
     });
     downloadMenu.setAction(4, [&]() {
         mainMenu.display();
     });
 
+    //schedule menu
+    scheduleMenu.setInput(0, "Enter hostname");
+    scheduleMenu.setAction(0, [&]() { scheduleMenu.getInput(0); });
+
+    scheduleMenu.setInput(1, "Enter save path");
+    scheduleMenu.setAction(1, [&]() { scheduleMenu.getInput(1); });
+
+    scheduleMenu.setInput(2, "Enter download path");
+    scheduleMenu.setAction(2, [&]() { scheduleMenu.getInput(2); });
+
+    scheduleMenu.setInput(3, "Enter username");
+    scheduleMenu.setAction(3, [&]() { scheduleMenu.getInput(3); });
+
+    scheduleMenu.setInput(4, "Enter password");
+    scheduleMenu.setAction(4, [&]() { scheduleMenu.getInput(4); });
+
+    scheduleMenu.setInput(5, "Enter priority");
+    scheduleMenu.setAction(5, [&]() { scheduleMenu.getInput(5); });
+
+    scheduleMenu.setInput(6, "Enter protocol");
+    scheduleMenu.setAction(6, [&]() { scheduleMenu.getInput(6); });
+
+    scheduleMenu.setInput(7, "Enter time - H:M");
+    scheduleMenu.setAction(7, [&]() { scheduleMenu.getInput(7); });
+
+    scheduleMenu.setAction(8, [&]() {
+        std::string priority = scheduleMenu.getInputAsString(5);
+        std::string username = scheduleMenu.getInputAsString(3);
+        std::string password = scheduleMenu.getInputAsString(4);
+     /*   std::shared_ptr<Download> download = std::make_shared<Download>(
+                scheduleMenu.getInputAsString(6),
+                scheduleMenu.getInputAsString(0),
+                scheduleMenu.getInputAsString(1),
+                scheduleMenu.getInputAsString(2),
+                scheduleMenu.getInputAsString(3),
+                scheduleMenu.getInputAsString(4), 1,
+                scheduleMenu.getInputAsString(7));*/
+        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", "klokanek.endora.cz",
+                                                                        settings.getSavePath().c_str(),
+                                                                        "/web/images/file.zip", "olivergg", "Heslo5.", 1, "21:58");
+        downloadManager.addScheduledDownload(download);
+        std::cout << "Download scheduled" << std::endl;
+    });
+
+    scheduleMenu.setAction(9, [&]() {
+        mainMenu.display(); });
+
+
+    //ftp menu
     ftpCredentialsMenu.setInput(0, "Enter Hostname");
     ftpCredentialsMenu.setAction(0, [&]() { ftpCredentialsMenu.getInput(0); });
 
@@ -83,15 +148,62 @@ int main() {
 
     // Set up actions for FTP credentials
     ftpCredentialsMenu.setAction(5, [&]() {
+        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", ftpCredentialsMenu.getInputAsString(0),
+                                                                       settings.getSavePath().c_str(), ftpCredentialsMenu.getInputAsString(1),
+                                                                      ftpCredentialsMenu.getInputAsString(3), ftpCredentialsMenu.getInputAsString(4), 1);
+        downloadManager.addDownload(download);
+        settings.saveDownload(download->getHostname(), download->getDownloadPath());
+    });
+
+    ftpCredentialsMenu.setAction(6, [&]() { downloadMenu.display(); });
+
+    //ftps menu
+    ftpsCredentialsMenu.setInput(0, "Enter Hostname");
+    ftpsCredentialsMenu.setAction(0, [&]() { ftpCredentialsMenu.getInput(0); });
+
+    ftpsCredentialsMenu.setInput(1, "Path to file");
+    ftpsCredentialsMenu.setAction(1, [&]() { ftpCredentialsMenu.getInput(1); });
+
+    ftpsCredentialsMenu.setInput(2, "Enter Port");
+    ftpsCredentialsMenu.setAction(2, [&]() { ftpCredentialsMenu.getInput(2); });
+
+    ftpsCredentialsMenu.setInput(3, "Enter Username");
+    ftpsCredentialsMenu.setAction(3, [&]() { ftpCredentialsMenu.getInput(3); });
+
+    ftpsCredentialsMenu.setInput(4, "Enter Password");
+    ftpsCredentialsMenu.setAction(4, [&]() { ftpCredentialsMenu.getInput(4); });
+
+    // Set up actions for FTP credentials
+    ftpsCredentialsMenu.setAction(5, [&]() {
 //        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", ftpCredentialsMenu.getInputAsString(0),
 //                                                                        settings.getSavePath().c_str(), ftpCredentialsMenu.getInputAsString(1),
 //                                                                        ftpCredentialsMenu.getInputAsString(3), ftpCredentialsMenu.getInputAsString(4), 1);
-        std::shared_ptr<Download> download = std::make_shared<Download>("FTP", "klokanek.endora.cz", settings.getSavePath().c_str(), "/web/style.css", "olivergg", "Heslo5.", 1);
+        std::shared_ptr<Download> download = std::make_shared<Download>("FTPS", "test.rebex.net",
+                                                                        settings.getSavePath().c_str(),
+                                                                        "/web/style.css", "demo", "password", 1);
         downloadManager.addDownload(download);
-        settings.saveDownload(download->getHostname(), download->getDownloadPath(), download->getSize());
+        settings.saveDownload(download->getHostname(), download->getDownloadPath());
     });
 
-    ftpCredentialsMenu.setAction(6, [&]() { mainMenu.display(); });
+    ftpsCredentialsMenu.setAction(6, [&]() { downloadMenu.display(); });
+
+    //https menu
+    httpsMenu.setInput(0, "Enter Hostname");
+    httpsMenu.setAction(0, [&]() { httpsMenu.getInput(0); });
+
+    httpsMenu.setInput(1, "Path to file");
+    httpsMenu.setAction(1, [&]() { httpsMenu.getInput(1); });
+    httpsMenu.setAction(2, [&]() {
+// std::shared_ptr<Download> download = std::make_shared<Download>("HTTPS", httpsMenu.getInputAsString(0), settings.getSavePath().c_str(), httpsMenu.getInputAsString(1), "", ".", 1);
+        std::shared_ptr<Download> download = std::make_shared<Download>("HTTPS", "olivermrovcak.6f.sk",
+                                                                        settings.getSavePath().c_str(),
+                                                                        "/images/html.png", "olivergg", "Heslo5.", 1);
+        downloadManager.addDownload(download);
+        settings.saveDownload(download->getHostname(), download->getDownloadPath());
+    });
+    httpsMenu.setAction(3, [&]() {
+        downloadMenu.display();
+    });
 
     //MAIN MENU
     mainMenu.setAction(0, [&]() { downloadMenu.display(); });
@@ -153,6 +265,9 @@ int main() {
         managerMenu.display();
     });
     mainMenu.setAction(4, [&]() {
+        scheduleMenu.display();
+    });
+    mainMenu.setAction(6, [&]() {
         endwin();
         exit(0);
     });

@@ -9,24 +9,30 @@
 #include <vector>
 #include "Download.h"
 #include "thread"
+#include "Settings.h"
 
 class DownloadManager {
 private:
-    std::vector<std::shared_ptr<Download>> downloads; // Store pointers to Download objects
-    std::vector<std::thread> threads; // Keep track of threads
+    std::vector<std::shared_ptr<Download>> downloads;
+    std::vector<std::shared_ptr<Download>> scheduledDownloads;
+    std::vector<std::thread> threads;
     std::mutex downloadMutex;
 public:
     DownloadManager();
     ~DownloadManager();
-    void addDownload(std::shared_ptr<Download> download); // Use shared_ptr for memory management
+    void addDownload(std::shared_ptr<Download> download);
     void cleanupCompletedDownloads();
     std::vector<std::shared_ptr<Download>> getDownloads();
+    void loadSchedule();
+    void scheduleDownload(std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority, std::string protocol, std::string time);
     void removeDownload(Download download);
+    void addScheduledDownload(std::shared_ptr<Download> download);
+    void removeScheduledDownload(Download download);
+    void checkAndInitiateScheduledDownloads();
+    void saveDownload(std::string url, std::string path, unsigned long size);
     void resumeDownload(int index);
     void pauseDownload(int index);
     int getDownloadCount();
-
-
 };
 
 

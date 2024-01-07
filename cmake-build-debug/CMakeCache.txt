@@ -230,6 +230,15 @@ CURSES_INCLUDE_PATH:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
 //Path to a library.
 CURSES_NCURSES_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libncurses.tbd
 
+//Path to a library.
+OPENSSL_CRYPTO_LIBRARY:FILEPATH=/opt/homebrew/lib/libcrypto.dylib
+
+//Path to a file.
+OPENSSL_INCLUDE_DIR:PATH=/opt/homebrew/include
+
+//Path to a library.
+OPENSSL_SSL_LIBRARY:FILEPATH=/opt/homebrew/lib/libssl.dylib
+
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
 
@@ -250,6 +259,9 @@ boost_headers_DIR:PATH=/opt/homebrew/lib/cmake/boost_headers-1.83.0
 
 //The directory containing a CMake configuration file for boost_system.
 boost_system_DIR:PATH=/opt/homebrew/lib/cmake/boost_system-1.83.0
+
+//The directory containing a CMake configuration file for ssl.
+ssl_DIR:PATH=ssl_DIR-NOTFOUND
 
 
 ########################
@@ -401,10 +413,40 @@ CURSES_NCURSES_LIBRARY-ADVANCED:INTERNAL=1
 FIND_PACKAGE_MESSAGE_DETAILS_Boost:INTERNAL=[/opt/homebrew/lib/cmake/Boost-1.83.0/BoostConfig.cmake][cfound components: system ][v1.83.0(1.65.0)]
 //Details about finding Curses
 FIND_PACKAGE_MESSAGE_DETAILS_Curses:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/lib/libcurses.tbd][/Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk/usr/include][v()]
+//Details about finding OpenSSL
+FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL:INTERNAL=[/opt/homebrew/lib/libcrypto.dylib][/opt/homebrew/include][c ][v3.2.0()]
+//ADVANCED property for variable: OPENSSL_CRYPTO_LIBRARY
+OPENSSL_CRYPTO_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_INCLUDE_DIR
+OPENSSL_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: OPENSSL_SSL_LIBRARY
+OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_ARGN
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+_OPENSSL_CFLAGS:INTERNAL=
+_OPENSSL_CFLAGS_I:INTERNAL=
+_OPENSSL_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_FOUND:INTERNAL=
+_OPENSSL_INCLUDEDIR:INTERNAL=
+_OPENSSL_LIBDIR:INTERNAL=
+_OPENSSL_LIBS:INTERNAL=
+_OPENSSL_LIBS_L:INTERNAL=
+_OPENSSL_LIBS_OTHER:INTERNAL=
+_OPENSSL_LIBS_PATHS:INTERNAL=
+_OPENSSL_MODULE_NAME:INTERNAL=
+_OPENSSL_PREFIX:INTERNAL=
+_OPENSSL_STATIC_CFLAGS:INTERNAL=
+_OPENSSL_STATIC_CFLAGS_I:INTERNAL=
+_OPENSSL_STATIC_CFLAGS_OTHER:INTERNAL=
+_OPENSSL_STATIC_LIBDIR:INTERNAL=
+_OPENSSL_STATIC_LIBS:INTERNAL=
+_OPENSSL_STATIC_LIBS_L:INTERNAL=
+_OPENSSL_STATIC_LIBS_OTHER:INTERNAL=
+_OPENSSL_STATIC_LIBS_PATHS:INTERNAL=
+_OPENSSL_VERSION:INTERNAL=
+__pkg_config_checked__OPENSSL:INTERNAL=1
 //ADVANCED property for variable: boost_headers_DIR
 boost_headers_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: boost_system_DIR

@@ -13,7 +13,7 @@ Settings::~Settings() {
 
 }
 
-void Settings::saveDownload(std::string url, std::string path, unsigned long size) {
+void Settings::saveDownload(std::string url, std::string path) {
     std::ofstream file;
     file.open("../history.txt", std::ios_base::app);
     if (!file.is_open()) {
@@ -24,7 +24,7 @@ void Settings::saveDownload(std::string url, std::string path, unsigned long siz
     auto now = std::chrono::system_clock::now();
     auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
-    file << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << " - " << url << " " << path << " size:" << size << std::endl;
+    file << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X") << " - " << url << " " << path << std::endl;
     file.close();
 }
 

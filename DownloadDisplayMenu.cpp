@@ -19,6 +19,9 @@ void DownloadDisplayMenu::display() {
         auto downloads = downloadManager.getDownloads(); // Ensure this method exists in DownloadManager
         for (int i = 0; i < downloads.size(); ++i) {
             auto download = downloads[i];
+            if (!download->isStarted()) {
+                continue;
+            }
             if (i == getHighlight()) {
                 attron(COLOR_PAIR(1));
             }
@@ -44,15 +47,3 @@ void DownloadDisplayMenu::display() {
     }
 }
 
-void DownloadManager::cleanupCompletedDownloads() {
-    std::lock_guard<std::mutex> guard(downloadMutex);  // Protect the downloads vector
-
-    // Iterate through the downloads and remove completed ones
-    for (auto it = downloads.begin(); it != downloads.end(); ) {
-        if ((*it)->isCompleted()) {
-            it = downloads.erase(it);  // Remove and move to the next
-        } else {
-            ++it;  // Move to the next
-        }
-    }
-}

@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
 #include <regex>
 #include <fstream>
 #include <ncurses.h>
@@ -22,10 +23,12 @@ private:
     std::string downloadPath;
     std::string username;
     std::string password;
+    std::string scheduledTime;
 
     int priority;
     unsigned long size = 0;
     unsigned long currentSize = 0;
+    bool started = false;
     bool paused = false;
     bool completed = false;
 
@@ -34,6 +37,7 @@ private:
 
 public:
     Download(std::string protocol, std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority);
+    Download(std::string protocol, std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority, std::string scheduledTime);
     ~Download();
 
     void start();
@@ -44,6 +48,7 @@ public:
 
     bool isPaused();
     bool isCompleted();
+    bool isStarted();
 
     void setPriority(int priority);
     void setFilename(std::string filename);
@@ -52,13 +57,14 @@ public:
 
     std::string getNewFileName(const std::string& originalPath);
 
-    const std::string &getUsername() const;
-    const std::string &getPassword() const;
-    const std::string &getHostname() const;
-    const std::string &getSavePath() const;
-    const std::string &getDownloadPath() const;
-    const std::string &getProtocol() const;
-    const std::string &getFilename() ;
+   std::string getUsername();
+   std::string getPassword();
+    std::string getHostname() ;
+    std::string getSavePath() ;
+    std::string getDownloadPath();
+    std::string getProtocol() ;
+    std::string getFilename() ;
+    std::string getScheduledTime();
 
     unsigned long getCurrentSize();
     unsigned long getSize();
