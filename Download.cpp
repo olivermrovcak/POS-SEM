@@ -20,6 +20,10 @@
 
     }
 
+    bool Download::isPaused() {
+        return paused;
+    }
+
     const std::string &Download::getUsername() const {
         return username;
     }
@@ -60,13 +64,21 @@
         this->size = size;
     }
 
+    bool Download::isCompleted() {
+        return completed;
+    }
+
+    void Download::setCompleted(bool completed) {
+        this->completed = completed;
+    }
+
     void Download::start() {
         if (protocol == "FTP") {
             ftpDownload();
         } else if (protocol == "FTPS") {
             // FTPS related code
         } else if (protocol == "HTTP") {
-            // HTTP related code
+            httpDownload();
         } else if (protocol == "HTTPS") {
             // HTTPS related code
         } else {
@@ -74,13 +86,15 @@
         }
     }
 
-
     void Download::pause() {
+        std::lock_guard<std::mutex> lock(mtx);  // Lock the mutex
         paused = true;
     }
 
     void Download::resume() {
-        paused = false;
+        std::unique_lock<std::mutex> lock(mtx);
+        paused = false;  // Clear the paused flag
+        cv.notify_one();  // Wake up the download thread
     }
 
     void Download::cancel() {
@@ -96,9 +110,6 @@
     }
 
     void Download::ftpDownload() {
-
-
-
         boost::asio::io_service io_service;
 
         // Resolve the server address and port
@@ -186,13 +197,29 @@
             boost::asio::streambuf response;
             boost::system::error_code ec;
             while (boost::asio::read(data_socket, response, boost::asio::transfer_at_least(1), ec)) {
+
+                {
+                    std::unique_lock<std::mutex> lock(mtx);
+                    cv.wait(lock, [this] { return !paused; });  // Wait while the download is paused
+                }
+
+                {
+                    std::lock_guard<std::mutex> lock(mtx);
+                    if (paused) {
+                        std::cout << "Stopping download" << std::endl;
+                        break;
+                    }
+                }
+
                 size_t data_length = response.size(); // Get the length of the received data
                 currentSize += data_length; // Update the current download size
                 outfile << &response;
             }
 
+            setCompleted(true);
+
             if (ec && ec != boost::asio::error::eof) {
-                printw("Error during read: %s\n", ec.message().c_str()); // Change std::cerr to printw for errors
+                printw("Error during read: %s\n", ec.message().c_str());
             }
 
             outfile.close();
@@ -201,6 +228,111 @@
             std::cerr << "Failed to parse the PASV response." << std::endl;
         }
     }
+
+    void Download::httpDownload() {
+        boost::asio::io_service io_service;
+
+        // Resolve the server address and port
+        tcp::resolver resolver(io_service);
+        tcp::resolver::query query(this->hostname, "80");
+        tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+
+        // Create and connect the socket
+        tcp::socket socket(io_service);
+        boost::asio::connect(socket, endpoint_iterator);
+
+        // Form the request message
+        std::ostringstream request_stream;
+        request_stream << "GET " << this->downloadPath << " HTTP/1.0\r\n";
+        request_stream << "Host: " << this->hostname << "\r\n";
+        request_stream << "Accept: */*\r\n";
+        request_stream << "Connection: close\r\n\r\n";
+
+        // Send the request
+        std::string request = request_stream.str();
+        boost::asio::write(socket, boost::asio::buffer(request));
+
+        // Read the response status line
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        // Check that response is OK
+        std::istream response_stream(&response);
+        std::string http_version;
+        unsigned int status_code;
+        std::string status_message;
+
+        response_stream >> http_version >> status_code;
+        std::getline(response_stream, status_message);
+
+        if (!response_stream || http_version.substr(0, 5) != "HTTP/")
+        {
+            std::cerr << "Invalid response\n";
+            return;
+        }
+        if (status_code != 200)
+        {
+            std::cerr << "Response returned with status code " << status_code << "\n";
+            return;
+        }
+
+        std::cout << "200"<< std::endl;
+
+        // Read the response headers, which are terminated by a blank line
+        boost::asio::read_until(socket, response, "\r\n\r\n");
+
+        // Process the response headers
+        std::string header;
+        while (std::getline(response_stream, header) && header != "\r")
+        {
+            // Headers processing...
+        }
+
+        // Open a file to write the downloaded data
+        size_t lastSlashPos = this->downloadPath.find_last_of("/\\");
+        std::string filename = lastSlashPos != std::string::npos ? this->downloadPath.substr(lastSlashPos + 1) : this->downloadPath;
+        std::string fullSavePath = this->savePath + (this->savePath.back() == '/' ? "" : "/") + filename;
+        std::ofstream outfile(fullSavePath, std::ios::binary);
+
+        // Write whatever content we already have to output
+        if (response.size() > 0) {
+            outfile << &response;
+        }
+
+        // Continue reading until EOF, writing data to output as we go
+        boost::system::error_code ec;
+        while (boost::asio::read(socket, response, boost::asio::transfer_at_least(1), ec)) {
+            {
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [this] { return !paused; });  // Wait while the download is paused
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(mtx);
+                if (paused) {
+                    std::cout << "Stopping download" << std::endl;
+                    break;
+                }
+            }
+
+            size_t data_length = response.size(); // Get the length of the received data
+            currentSize += data_length; // Update the current download size
+            outfile << &response;
+        }
+
+        std::cout << size << std::endl;
+        std::cout << currentSize << std::endl;
+        std::cout << fullSavePath << std::endl;
+        std::cout << downloadPath << std::endl;
+        setCompleted(true);
+
+        if (ec != boost::asio::error::eof) {
+            std::cerr << "Error during read: " << ec.message() << "\n";
+        }
+
+        outfile.close();
+    }
+
 
     bool Download::parse_pasv_response(const std::string &response, std::string &ip_address, unsigned short &port) {
             std::regex pasv_regex("\\((\\d+),(\\d+),(\\d+),(\\d+),(\\d+),(\\d+)\\)");

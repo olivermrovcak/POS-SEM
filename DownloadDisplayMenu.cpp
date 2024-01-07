@@ -23,7 +23,13 @@ void DownloadDisplayMenu::display() {
                 attron(COLOR_PAIR(1));
             }
 
-            printw("%d. %s - %s\n", i + 1, download->getDownloadPath().c_str() , getDownloadPercentage(download).c_str());
+            printw("%d. %s - %s, %s, %s",
+                   i + 1,
+                   download->getDownloadPath().c_str(),
+                   getDownloadPercentage(download).c_str(),
+                   (download->isPaused() && !download->isCompleted()) ? "Paused\n" : "Not Paused",
+                   download->isCompleted() ? "Completed\n" : "\n");
+
 
             if (i == getHighlight()) {
                 attroff(COLOR_PAIR(1));
@@ -34,6 +40,19 @@ void DownloadDisplayMenu::display() {
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
         if (getch() == 27) {
             break;
+        }
+    }
+}
+
+void DownloadManager::cleanupCompletedDownloads() {
+    std::lock_guard<std::mutex> guard(downloadMutex);  // Protect the downloads vector
+
+    // Iterate through the downloads and remove completed ones
+    for (auto it = downloads.begin(); it != downloads.end(); ) {
+        if ((*it)->isCompleted()) {
+            it = downloads.erase(it);  // Remove and move to the next
+        } else {
+            ++it;  // Move to the next
         }
     }
 }

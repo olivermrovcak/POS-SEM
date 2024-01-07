@@ -19,19 +19,13 @@ public:
     DownloadManager();
     ~DownloadManager();
     void addDownload(std::shared_ptr<Download> download); // Use shared_ptr for memory management
+    void cleanupCompletedDownloads();
     std::vector<std::shared_ptr<Download>> getDownloads();
     void removeDownload(Download download);
+    void resumeDownload(int index);
+    void pauseDownload(int index);
     int getDownloadCount();
 
-    std::vector<std::string> getDownloadStatuses() {
-        std::vector<std::string> statuses;
-        statuses.reserve(downloads.size());
-        //reserve alokuje pamat pre vektor, aby sa nemusela alokovat pri kazdom pridani prvku
-        for (auto& download : downloads) {
-            statuses.push_back("30");
-        }
-        return statuses;
-    }
 
 };
 

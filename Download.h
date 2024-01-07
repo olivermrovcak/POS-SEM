@@ -24,9 +24,13 @@ private:
     std::string password;
 
     int priority;
-    unsigned long size;
-    unsigned long currentSize = 0.0;
+    unsigned long size = 0;
+    unsigned long currentSize = 0;
     bool paused = false;
+    bool completed = false;
+
+    std::mutex mtx;
+    std::condition_variable cv;
 
 public:
     Download(std::string protocol, std::string hostname, std::string savePath, std::string downloadPath, std::string username, std::string password, int priority);
@@ -38,8 +42,13 @@ public:
     void cancel();
     void restart();
 
+    bool isPaused();
+    bool isCompleted();
+
     void setPriority(int priority);
     void setFilename(std::string filename);
+    void setSize(unsigned long size);
+    void setCompleted(bool completed);
 
     std::string getNewFileName(const std::string& originalPath);
 
@@ -53,8 +62,6 @@ public:
 
     unsigned long getCurrentSize();
     unsigned long getSize();
-
-    void setSize(unsigned long size);
 
     void ftpDownload();
     void ftpsDownload();

@@ -16,7 +16,7 @@ void Menu::display () {
     while (true) {
         clear();
 
-        mvprintw(1, 10, title.c_str());
+        mvprintw(0, 10, title.c_str());
 
         for (size_t i = 0; i < options.size(); ++i) {
             if (i == highlight) {
