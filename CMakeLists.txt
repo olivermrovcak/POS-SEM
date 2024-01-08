@@ -24,7 +24,9 @@ add_executable(POS_SEM main.cpp
         DownloadManager.cpp
         DownloadManager.h
         DownloadDisplayMenu.cpp
-        DownloadDisplayMenu.h)
+        DownloadDisplayMenu.h
+        FileManager.cpp
+        FileManager.h)
 
 target_link_libraries(POS_SEM Boost::system)
 target_link_libraries(POS_SEM ${CURSES_LIBRARIES})

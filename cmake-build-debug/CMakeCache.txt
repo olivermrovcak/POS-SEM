@@ -260,9 +260,6 @@ boost_headers_DIR:PATH=/opt/homebrew/lib/cmake/boost_headers-1.83.0
 //The directory containing a CMake configuration file for boost_system.
 boost_system_DIR:PATH=/opt/homebrew/lib/cmake/boost_system-1.83.0
 
-//The directory containing a CMake configuration file for ssl.
-ssl_DIR:PATH=ssl_DIR-NOTFOUND
-
 
 ########################
 # INTERNAL cache entries

@@ -8,6 +8,7 @@
 #include "Settings.h"
 #include "DownloadManager.h"
 #include "DownloadDisplayMenu.h"
+#include "FileManager.h"
 
 void initialize_ncurses() {
     initscr();
@@ -34,6 +35,7 @@ int main() {
 
     Settings settings;
     DownloadManager downloadManager;
+    FileManager fileManager;
 
     const std::chrono::seconds cleanupInterval(5);
 
@@ -46,8 +48,7 @@ int main() {
     });
 
     Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n",
-                  {"Download", "Currently downloading", "History", "Download manager", "Schedule download", "Settings",
-                   "Exit"});
+                  {"Download", "Currently downloading", "History", "Download manager", "Schedule download","File manager","Exit"});
     Menu scheduleMenu("Schedule download\nFill the inputs\n",
                       {"Enter hostname", "Enter save path", "Enter download path", "Enter username", "Enter password",
                        "Enter priority", "Enter protocol", "Enter time", "Submit schedule", "Back"});
@@ -70,6 +71,9 @@ int main() {
     Menu managerMenu("Download manager\n", {});
 
     Menu downloadHistoryMenu("Download history\n", {});
+
+    Menu fileMenu("File Manager\n\n", {"Enter path: ","List Contents", "Remove Directory", "Create Directory", "Back"});
+
 
     //download menu
     downloadMenu.setAction(0, [&]() {
@@ -131,7 +135,6 @@ int main() {
 
     scheduleMenu.setAction(9, [&]() {
         mainMenu.display(); });
-
 
     //ftp menu
     ftpCredentialsMenu.setInput(0, "Enter Hostname");
@@ -217,6 +220,34 @@ int main() {
         downloadMenu.display();
     });
 
+    //file manager
+    fileMenu.setInput(0, "Enter path: ");
+    fileMenu.setAction(0, [&]() { fileMenu.getInput(0); });
+    fileMenu.setAction(1, [&]() {
+        if (fileMenu.getInputAsString(0) == "") {
+            fileMenu.getInput(0);
+        } else {
+            fileManager.listDirectoryContents(fileMenu.getInputAsString(0));
+        }
+    });
+    fileMenu.setAction(2, [&]() {
+        if (fileMenu.getInputAsString(0) == "") {
+            fileMenu.getInput(0);
+        } else {
+            fileManager.removeDirectory(fileMenu.getInputAsString(0));
+        }
+    });
+    fileMenu.setAction(3, [&]() {
+        if (fileMenu.getInputAsString(0) == "") {
+            fileMenu.getInput(0);
+        } else {
+            fileManager.createDirectory(fileMenu.getInputAsString(0));
+        }
+    });
+    fileMenu.setAction(4, [&]() {
+        mainMenu.display();
+    });
+
     //MAIN MENU
     mainMenu.setAction(0, [&]() { downloadMenu.display(); });
     mainMenu.setAction(1, [&]() { downloadDisplayMenu.display(); });
@@ -280,8 +311,12 @@ int main() {
         managerMenu.setOptions(managerOptions);
         managerMenu.display();
     });
+
     mainMenu.setAction(4, [&]() {
         scheduleMenu.display();
+    });
+    mainMenu.setAction(5, [&]() {
+       fileMenu.display();
     });
     mainMenu.setAction(6, [&]() {
         endwin();
