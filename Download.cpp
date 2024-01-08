@@ -151,7 +151,7 @@
             boost::asio::streambuf response;
             boost::asio::read_until(sock, response, "\n");
             std::string s((std::istreambuf_iterator<char>(&response)), std::istreambuf_iterator<char>());
-            printw("%s\n", s.c_str()); // Change std::cout to printw
+            printw("%s\n", s.c_str());
             return s;
         };
 
@@ -352,6 +352,9 @@
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 started = true;
+                if (cancelled) {
+                    return;
+                }
                 if (paused) {
                     std::cout << "Stopping download" << std::endl;
                     break;
@@ -459,6 +462,9 @@
             {
                 std::lock_guard<std::mutex> lock(mtx);
                 started = true;
+                if (cancelled) {
+                    return;
+                }
                 if (paused) {
                     std::cout << "Stopping download" << std::endl;
                     break;
@@ -568,9 +574,20 @@
         while (boost::asio::read(ssl_socket, response, boost::asio::transfer_at_least(1), ec)) {
 
             {
+                std::unique_lock<std::mutex> lock(mtx);
+                cv.wait(lock, [this] { return !paused; });
+            }
+
+            {
                 std::lock_guard<std::mutex> lock(mtx);
                 started = true;
-                currentSize += response.size();  // Update the current download size
+                if (cancelled) {
+                    return;
+                }
+                if (paused) {
+                    std::cout << "Stopping download" << std::endl;
+                    break;
+                }
             }
 
             outfile << &response;

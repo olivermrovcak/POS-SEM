@@ -284,17 +284,17 @@ int main() {
             // Set 'Resume' action
             managerSubMenus.back().back().setAction(1, [&, index]() {
                 downloadManager.resumeDownload(index);
-                managerMenu.display();  // Display the manager menu again after action
+                managerMenu.display();
             });
-
+            // Set 'Cancell' action
             managerSubMenus.back().back().setAction(2, [&, index]() {
                 downloadManager.cancelDownload(index);
-                managerMenu.display();  // Display the manager menu again after action
+                managerMenu.display();
             });
 
             // Set 'Back' action
             managerSubMenus.back().back().setAction(3, [&]() {
-                managerMenu.display();  // Simply go back to the manager menu
+                managerMenu.display();
             });
         }
 
