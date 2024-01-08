@@ -27,7 +27,7 @@ void initialize_ncurses() {
 
 bool checkSettingsFileExists() {
     std::ifstream file("../settings.txt");  // Change this to your actual settings file path
-    return file.good();  // Returns true if the file exists and is accessible
+    return file.good();
 }
 
 int main() {
@@ -163,7 +163,7 @@ int main() {
 
     ftpCredentialsMenu.setAction(6, [&]() { downloadMenu.display(); });
 
-    //ftps menu
+    //Ftps menu
     ftpsCredentialsMenu.setInput(0, "Enter Hostname");
     ftpsCredentialsMenu.setAction(0, [&]() { ftpCredentialsMenu.getInput(0); });
 
@@ -190,7 +190,7 @@ int main() {
 
     ftpsCredentialsMenu.setAction(6, [&]() { downloadMenu.display(); });
 
-    //https menu
+    //Https menu
     httpsMenu.setInput(0, "Enter Hostname");
     httpsMenu.setAction(0, [&]() { httpsMenu.getInput(0); });
 
@@ -205,7 +205,7 @@ int main() {
         downloadMenu.display();
     });
 
-    //http menu
+    //Http menu
     httpMenu.setInput(0, "Enter Hostname");
     httpMenu.setAction(0, [&]() { httpsMenu.getInput(0); });
 
