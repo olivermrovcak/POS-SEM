@@ -31,6 +31,7 @@ private:
     bool started = false;
     bool paused = false;
     bool completed = false;
+    bool cancelled = false;
 
     std::mutex mtx;
     std::condition_variable cv;
@@ -49,6 +50,7 @@ public:
     bool isPaused();
     bool isCompleted();
     bool isStarted();
+    bool isCancelled();
 
     void setPriority(int priority);
     void setFilename(std::string filename);

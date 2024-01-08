@@ -83,6 +83,10 @@
         return scheduledTime;
     }
 
+    bool Download::isCancelled() {
+        return cancelled;
+    }
+
     bool Download::isCompleted() {
         return completed;
     }
@@ -117,7 +121,8 @@
     }
 
     void Download::cancel() {
-        // Cancel download
+        std::lock_guard<std::mutex> lock(mtx);  // Lock the mutex
+        cancelled = true;
     }
 
     void Download::restart() {
@@ -226,6 +231,9 @@
                 {
                     std::lock_guard<std::mutex> lock(mtx);
                     started = true;
+                    if (cancelled) {
+                        return;
+                    }
                     if (paused) {
                         std::cout << "Stopping download" << std::endl;
                         break;

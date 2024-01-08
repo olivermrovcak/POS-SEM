@@ -33,6 +33,15 @@ void DownloadManager::pauseDownload(int index) {
     }
 }
 
+//cancell download
+void DownloadManager::cancelDownload(int index) {
+    if (index >= 0 && index < downloads.size()) {
+        std::lock_guard<std::mutex> guard(downloadMutex);  // Protect the downloads vector
+        downloads[index]->cancel();  // Resume the specific download
+    }
+}
+
+
 void DownloadManager::addDownload(std::shared_ptr<Download> download) {
     std::lock_guard<std::mutex> guard(downloadMutex);  // Protect the downloads vector
     threads.emplace_back(&Download::start, download);
@@ -53,7 +62,7 @@ void DownloadManager::cleanupCompletedDownloads() {
 
     // Iterate through the downloads and remove completed ones
     for (auto it = downloads.begin(); it != downloads.end(); ) {
-        if ((*it)->isCompleted()) {
+        if ((*it)->isCompleted() || (*it)->isCancelled()) {
             it = downloads.erase(it);  // Remove and move to the next
         } else {
             ++it;  // Move to the next

@@ -31,6 +31,7 @@ public:
     void checkAndInitiateScheduledDownloads();
     void saveDownload(std::string url, std::string path, unsigned long size);
     void resumeDownload(int index);
+    void cancelDownload(int index);
     void pauseDownload(int index);
     int getDownloadCount();
 };

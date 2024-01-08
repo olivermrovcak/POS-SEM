@@ -45,7 +45,6 @@ int main() {
         }
     });
 
-    // Create main menu and submenus
     Menu mainMenu("WELCOME!\nChoose from menu by pressing enter\n",
                   {"Download", "Currently downloading", "History", "Download manager", "Schedule download", "Settings",
                    "Exit"});
@@ -242,7 +241,7 @@ int main() {
             managerOptions.push_back(downloadManager.getDownloads()[i]->getDownloadPath());
 
             managerSubMenus.back().emplace_back("Download Options\n",
-                                                std::vector<std::string>{"Pause", "Resume", "Back"});
+                                                std::vector<std::string>{"Pause", "Resume","Cancel", "Back"});
             int index = i;  // Capture the current index
 
             // Set 'Pause' action
@@ -257,8 +256,13 @@ int main() {
                 managerMenu.display();  // Display the manager menu again after action
             });
 
+            managerSubMenus.back().back().setAction(2, [&, index]() {
+                downloadManager.cancelDownload(index);
+                managerMenu.display();  // Display the manager menu again after action
+            });
+
             // Set 'Back' action
-            managerSubMenus.back().back().setAction(2, [&]() {
+            managerSubMenus.back().back().setAction(3, [&]() {
                 managerMenu.display();  // Simply go back to the manager menu
             });
         }
